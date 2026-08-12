@@ -1,62 +1,42 @@
-import os
-from threading import Thread
 import discord
-from discord.ext import commands
 from flask import Flask
+from threading import Thread
+import os
 
-# 1. إعداد فلاسك لفتح المنفذ المطلوب في Render
+# إعدادات الفلاسك للإبقاء على السيرفر نشطاً
 app = Flask('')
-
 
 @app.route('/')
 def home():
-  return 'Bot is running!'
+    return "Bot is alive!"
 
-
-def run_flask():
-  port = int(os.environ.get('PORT', 8080))
-  app.run(host='0.0.0.0', port=port)
-
+def run():
+    app.run(host='0.0.0.0', port=10000)
 
 def keep_alive():
-  t = Thread(target=run_flask)
-  t.start()
+    t = Thread(target=run)
+    t.start()
 
-
-# تشغيل السيرفر أولاً
-keep_alive()
-
-# 2. إعدادات بوت الديسكورد
+# إعدادات بوت الديسكورد
 intents = discord.Intents.default()
-intents.guilds = True
-intents.voice_states = True
+intents.voice_states = True  # مهم جداً للرومات الصوتية
+client = discord.Client(intents=intents)
 
-bot = commands.Bot(command_prefix='!', intents=intents)
-
-VOICE_CHANNEL_IDS = [
-    1516020814053642340,
-    1516020972694802515,
-    1459695916889149440,
-    1459695855526477845,
-    1527903471922184192,
-    152785258598451854,
-]
-
-
-@bot.event
+@client.event
 async def on_ready():
-  print(f'تم تسجيل الدخول بنجاح باسم {bot.user.name}')
+    print(f'Logged in as {client.user}')
+    
+    # ضع هنا أللدي (ID) الخاص بالروم الصوتي الذي تريد أن يدخله البوت
+    CHANNEL_ID = 123456789012345678  # استبدل الرقم برقم الروم الخاص بك
+    
+    channel = client.get_channel(CHANNEL_ID)
+    if channel:
+        try:
+            await channel.connect()
+            print(f"Successfully joined voice channel: {channel.name}")
+        except Exception as e:
+            print(f"Failed to join voice channel: {e}")
 
-  for channel_id in VOICE_CHANNEL_IDS:
-    channel = bot.get_channel(channel_id)
-    if channel and isinstance(channel, discord.VoiceChannel):
-      try:
-        if not discord.utils.get(bot.voice_clients, channel=channel):
-          await channel.connect()
-          print(f'تم الدخول إلى الروم بنجاح {channel.name}')
-      except Exception as e:
-        print(f'حدث خطأ أثناء محاولة الدخول إلى الروم {channel_id}: {e}')
-
-
-# 3. تشغيل البوت في النهاية
-bot.run(os.getenv('DISCORD_TOKEN'))
+keep_alive()
+token = os.environ.get('DISCORD_TOKEN')
+client.run(token)
