@@ -36,17 +36,17 @@ async def on_ready():
         1527852445831622696
     ]
     
-    # ضع الكود الجديد هنا للاتصال بالرومات مباشرة
     for channel_id in VOICE_CHANNEL_IDS:
         try:
             channel = await client.fetch_channel(channel_id)
+            print(f"Found channel: {channel.name} (Type: {type(channel)})")
             if channel and isinstance(channel, discord.VoiceChannel):
                 await channel.connect()
                 print(f"Successfully joined voice channel: {channel.name}")
             else:
-                print(f"Channel is not a voice channel: {channel_id}")
+                print(f"Skipped: Channel {channel_id} is not a voice channel (It is {type(channel)})")
         except Exception as e:
-            print(f"Failed to fetch or join channel {channel_id}: {e}")
+            print(f"ERROR connecting to channel {channel_id}: {e}")
 
 keep_alive()
 token = os.environ.get('DISCORD_TOKEN')
