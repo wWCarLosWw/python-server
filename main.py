@@ -22,7 +22,9 @@ client = discord.Client(intents=intents)
 
 @client.event
 async def on_ready():
-    print(f'Logged in as {client.user}', flush=True)
+    # هذا هو سطر الطباعة الجديد للتأكد من أن البوت يرى السيرفر الصحيح
+    print(f"Logged in as {client.user}", flush=True)
+    print(f"Connected to guilds: {[guild.name for guild in client.guilds]}", flush=True)
     
     VOICE_CHANNEL_IDS = [
         1516020814053642340,
@@ -36,7 +38,7 @@ async def on_ready():
     for channel_id in VOICE_CHANNEL_IDS:
         try:
             channel = await client.fetch_channel(channel_id)
-            print(f"Found channel: {channel.name} (Type: {type(channel)})", flush=True)
+            print(f"Found channel: {channel.name}", flush=True)
             if channel and isinstance(channel, discord.VoiceChannel):
                 await channel.connect()
                 print(f"Successfully joined voice channel: {channel.name}", flush=True)
