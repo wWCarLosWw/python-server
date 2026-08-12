@@ -25,3 +25,27 @@ async def on_ready():
                 print(f"حدث خطأ أثناء محاولة الدخول إلى الروم {channel_id}: {e}")
 
 bot.run(os.getenv("DISCORD_TOKEN"))
+
+from flask import Flask
+from threading import Thread
+
+app = Flask('')
+
+
+@app.route('/')
+def home():
+  سترى_الرسالة = 'Bot is running!'
+  return 'Bot is running!'
+
+
+def run():
+  app.run(host='0.0.0.0', port=8080)
+
+
+def keep_alive():
+  t = Thread(target=run)
+  t.start()
+
+
+# استدعاء الدالة قبل تشغيل البوت
+keep_alive()
