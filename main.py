@@ -26,19 +26,27 @@ client = discord.Client(intents=intents)
 async def on_ready():
     print(f'Logged in as {client.user}')
     
-    # ضع هنا آيديات الرومات الصوتية (يمكنك إضافة أي عدد تريد داخل الأقواس الفاصلة بينها بفواصل)
-    VOICE_CHANNEL_IDS = [1516020814053642340,1516020972694802515,1459695916889149440,1459695855526477845,1527903471922184192,1527852585598451854]
+    # آيديات الرومات الصوتية الخاصة بك
+    VOICE_CHANNEL_IDS = [
+        1516020814053642340,
+        1516020972694802515,
+        1459695916889149440,
+        1459695855526477845,
+        1527903471922184192,
+        1527852445831622696
+    ]
     
+    # ضع الكود الجديد هنا للاتصال بالرومات مباشرة
     for channel_id in VOICE_CHANNEL_IDS:
-        channel = client.get_channel(channel_id)
-        if channel and isinstance(channel, discord.VoiceChannel):
-            try:
+        try:
+            channel = await client.fetch_channel(channel_id)
+            if channel and isinstance(channel, discord.VoiceChannel):
                 await channel.connect()
                 print(f"Successfully joined voice channel: {channel.name}")
-            except Exception as e:
-                print(f"Failed to join channel {channel_id}: {e}")
-        else:
-            print(f"Channel not found or not a voice channel: {channel_id}")
+            else:
+                print(f"Channel is not a voice channel: {channel_id}")
+        except Exception as e:
+            print(f"Failed to fetch or join channel {channel_id}: {e}")
 
 keep_alive()
 token = os.environ.get('DISCORD_TOKEN')
